@@ -1,0 +1,11 @@
+# ninja log v6
+184	2114	1747990604730226220	CMakeFiles/cw.dir/tests.cpp.o	4bd4fd458b87748b
+179	184	1747990604723963391	CMakeFiles/cw.dir/tests.cpp.o.modmap	c77a101132ea0e53
+224	1832	1748256749392920149	CMakeFiles/cw.dir/main.cpp.o	33436df9b93cdc3b
+1	22	1748258318205690156	build.ninja	6ce551e8bc5a08c4
+230	237	1748257435800714015	CMakeFiles/cw.dir/main.cpp.o.modmap	b37d683f91ff25ec
+1	179	1747990604545961561	CMakeFiles/cw.dir/tests.cpp.o.ddi	dbc233e0b68cdbb
+1833	1944	1748256751001931358	cw	3b756ef5245d58b8
+230	237	1748257435800714015	/home/rzms/CLionProjects/saod/cw/cmake-build-debug/CMakeFiles/cw.dir/CXXModules.json	b37d683f91ff25ec
+230	237	1748257435800714015	CMakeFiles/cw.dir/CXX.dd	b37d683f91ff25ec
+2	229	1748257435572713562	CMakeFiles/cw.dir/main.cpp.o.ddi	5a98a6a6c5529219
