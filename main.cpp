@@ -6,72 +6,61 @@
 #include "./include/my_const.h"
 #include "./include/dynamic_list.h"
 #include "./include/statick_stack.h"
+#include "./include/person.h"
 #include "./include/department.h"
 #include "./include/shop.h"
-#include "./include/person.h"
+
+void print_all_data(const Shop &shop) {
+    std::cout << "Список отделов:\n";
+    shop.get_list_departments().for_each([](const Department &department) {
+        std::cout << department.get_name() << "\n";
+        std::cout << " Список сотрудников отдела:\n";
+        department.get_stack_persons().for_each([](const Person &person) {
+            std::cout << "\t";
+            if (!person.get_name().empty()) {
+                std::cout << "ФИО: Зарплата\n";
+                std::cout << "\t" << person.get_name() << ": " << person.get_salary() << "\n";
+            }
+        });
+        std::cout << "\n";
+    });
+}
+
+void remove_person(const Shop &shop, const std::string &dep, const std::string &name) {
+    try {
+        shop.find_department(dep).remove_person(name);
+    } catch (const std::exception &e) {
+        std::cout << "Ошибка удаления сотрудника\n";
+    }
+}
+
+void remove_department(Shop &shop, const std::string &dep) {
+    try {
+        shop.remove_department(dep);
+    } catch (const std::exception &e) {
+        std::cout << "Ошибка удаления отдела\n";
+    }
+}
 
 int main(int argc, char *argv[]) {
-    Dynamic_list<Shop> list = Dynamic_list<Shop>();
-    list.insert_element("Nokia");
-    list.insert_element("Dyson");
-    list.insert_element("Bosch");
-    list.insert_element("Apple");
+    Shop shop = Shop("Amazon");
 
+    shop.add_department("pc");
+    shop.find_department("pc").add_person("rostislav", 300);
+    shop.add_department("books");
+    shop.find_department("books").add_person("Ivan", 229);
+    shop.add_department("wym");
+    shop.find_department("wym").add_person("Max", 77);
 
-    std::cout << "list1\n";
-    list.print_nodes();
-    std::cout << "\n";
+    print_all_data(shop);
 
-    Dynamic_list<Shop> list2 = list;
-    std::cout << "list2\n";
-    list2.insert_element("Motorolla");
-    list2.print_nodes();
-    std::cout << "\n";
+    shop.find_department("pc").find_person("rostislav").set_name("Vlad");
 
-    // Dynamic_list<Shop> list3 = list;
-    // list3.delete_element("Bosh");
-    // list3.delete_element("Apple");
-    // list3.delete_element("Dyson");
-    // list3.delete_element("Bosch");
-    // list3.insert_element("Motorolla");
-    // list3.delete_element("Motorolla");
-    // list3.delete_element("Nokia");
+    remove_person(shop, "pc", "rostislav");
+    remove_department(shop, "pc");
 
+    print_all_data(shop);
 
-    Dynamic_list<Shop> list3 = Dynamic_list<Shop>();
-    list3.insert_element("Amazon");
-    list3.insert_element("Tesla");
-
-    list = list3;
-    list.insert_element("Abazon");
-
-    // if (!list.delete_element("Dyson").empty()) {
-    //     list.print_nodes();
-    //     std::cout << "\n";
-    // }
-    //
-    // if (!list.delete_element("Nokia").empty()) {
-    //     list.print_nodes();
-    //     std::cout << "\n";
-    // }
-    //
-    // if (!list.delete_element("Apple").empty()) {
-    //     list.print_nodes();
-    //     std::cout << "\n";
-    // }
-
-
-    std::cout << "list1\n";
-    list.print_nodes();
-    std::cout << "\n";
-
-    std::cout << "list2\n";
-    list2.print_nodes();
-    std::cout << "\n";
-
-    std::cout << "list3\n";
-    list3.print_nodes();
-    std::cout << "\n";
-
+    remove_department(shop, "pc");
     return EXIT_SUCCESS;
 }

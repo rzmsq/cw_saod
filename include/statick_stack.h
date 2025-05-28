@@ -1,27 +1,14 @@
-//
-// Created by rzms on 26.05.25.
-//
-
 #ifndef STATICK_STACK_H
 #define STATICK_STACK_H
 
+
+// стек на основе статического выделения памяти
 template<typename T>
 class Static_stack {
+    // индекс вершины стека
     int32_t top{my_constants::stack_empty};
+    // массив-стек
     T data[my_constants::max_size_stack];
-    // struct Node {
-    // int32_t top{0};
-    // T data;
-
-    // Node() {
-    //     top++;
-    //     data = T();
-    // }
-    //
-    // explicit Node(const std::string &name) {
-    //     top++;
-    //     data = T(name);
-    // }
 
     [[nodiscard]] bool is_empty() const {
         return top == my_constants::stack_empty;
@@ -31,25 +18,65 @@ class Static_stack {
         return top == my_constants::max_size_stack - 1;
     }
 
+    // поиск индекса элемента
+    int32_t find(const std::string &name) {
+        for (int32_t i = 0; i < my_constants::max_size_stack; ++i) {
+            if (data[i].get_name() == name) {
+                return i;
+            }
+        }
+        return my_constants::el_not_found;
+    }
+
 public:
-    void push(const std::string &name) {
+    // Добавление в стек
+    void push(const T &new_data) {
         if (is_full()) {
             std::cerr << "Ошибка добавления\n";
             return;
         }
 
-        top++;
+        ++top;
         if (top < my_constants::max_size_stack) {
-            data[top] = T(name);
+            data[top] = new_data;
         }
     }
 
-    void pop() {
+    // Удаление из стека
+    void delete_el(const std::string &name) {
         if (is_empty()) {
             std::cerr << "Ошибка удаления\n";
             return;
         }
-        top--;
+        const int32_t index = find(name);
+        if (index != my_constants::el_not_found) {
+            if (index != top) {
+                data[index] = data[top];
+            }
+            data[top] = T();
+            --top;
+        } else {
+            throw std::runtime_error("Элемент не найден");
+        }
+    }
+
+    // поиск заданного элемента
+    T &find_el(const std::string &name) {
+        const int32_t index = find(name);
+        if (index != my_constants::el_not_found) {
+            return data[index];
+        }
+        throw std::runtime_error("Элемент не найден");
+    }
+
+    // Обработка каждого элемента стека переданной функцией
+    template<typename Func>
+    void for_each(Func func) const {
+        if (top != my_constants::stack_empty) {
+            for (int32_t i = 0; i <= top; ++i) {
+                func(data[i]);
+            }
+        }
     }
 };
 

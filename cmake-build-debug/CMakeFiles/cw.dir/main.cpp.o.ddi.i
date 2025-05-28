@@ -70772,10 +70772,27 @@ namespace std __attribute__ ((__visibility__ ("default")))
 # 4 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
 
 
-# 1 "/home/rzms/CLionProjects/saod/cw/./include/dynamic_list.h" 1
-# 9 "/home/rzms/CLionProjects/saod/cw/./include/dynamic_list.h"
+# 1 "/home/rzms/CLionProjects/saod/cw/./include/my_const.h" 1
 
-# 9 "/home/rzms/CLionProjects/saod/cw/./include/dynamic_list.h"
+
+
+
+
+
+
+
+# 8 "/home/rzms/CLionProjects/saod/cw/./include/my_const.h"
+namespace my_constants {
+    constexpr size_t max_size_stack{16};
+    constexpr int32_t stack_empty{-1};
+    constexpr int32_t el_not_found{-1};
+}
+# 7 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
+# 1 "/home/rzms/CLionProjects/saod/cw/./include/dynamic_list.h" 1
+
+
+
+
 template<typename T>
 class Dynamic_list {
     struct Node {
@@ -70783,6 +70800,7 @@ class Dynamic_list {
         T data;
 
         Node(): next(nullptr), prev(nullptr) {
+            data = T();
         }
 
         explicit Node(const std::string &name) {
@@ -70792,6 +70810,15 @@ class Dynamic_list {
     };
 
     Node *head = nullptr;
+
+
+    [[nodiscard]] Node *search(const std::string &name) const {
+        Node *current = head->next;
+        while (current && current->data.get_name() != name) {
+            current = current->next;
+        }
+        return current;
+    }
 
 public:
     Dynamic_list() {
@@ -70849,50 +70876,46 @@ public:
         Node *new_node = new Node(name);
         Node *current = head->next;
 
+        try {
 
-        if (!current || new_node->data.get_name() < current->data.get_name()) {
-            new_node->next = current;
-            new_node->prev = head;
-            if (current) {
-                current->prev = new_node;
+            if (!current || new_node->data.get_name() < current->data.get_name()) {
+                new_node->next = current;
+                new_node->prev = head;
+                if (current) {
+                    current->prev = new_node;
+                }
+                head->next = new_node;
+                return;
             }
-            head->next = new_node;
-            return;
-        }
 
 
 
-        while (current->next && current->data.get_name() < new_node->data.get_name()) {
-            current = current->next;
-        }
-
-        if (current->data.get_name() < new_node->data.get_name()) {
-
-            new_node->next = current->next;
-            new_node->prev = current;
-            if (current->next) {
-                current->next->prev = new_node;
+            while (current->next && current->data.get_name() < new_node->data.get_name()) {
+                current = current->next;
             }
-            current->next = new_node;
-        } else {
 
-            new_node->next = current;
-            new_node->prev = current->prev;
-            current->prev->next = new_node;
+            if (current->data.get_name() < new_node->data.get_name()) {
+
+                new_node->next = current->next;
+                new_node->prev = current;
+                if (current->next) {
+                    current->next->prev = new_node;
+                }
+                current->next = new_node;
+            } else {
+
+                new_node->next = current;
+                new_node->prev = current->prev;
+                current->prev->next = new_node;
+            }
+        } catch (...) {
+            std::cerr << "Ошибка добавления отдела\n";
+            delete new_node;
         }
     }
 
 
-    [[nodiscard]] Node *search(const std::string &name) const {
-        Node *current = head->next;
-        while (current && current->data.get_name() != name) {
-            current = current->next;
-        }
-        return current;
-    }
-
-
-    [[nodiscard]] std::string delete_element(const std::string &name) {
+    void delete_element(const std::string &name) {
         if (const Node *node_for_del = search(name)) {
             node_for_del->prev->next = node_for_del->next;
             if (node_for_del->next) {
@@ -70900,24 +70923,34 @@ public:
             }
             const std::string name_deleted = node_for_del->data.get_name();
             delete node_for_del;
-            return name_deleted;
+        } else {
+            throw std::runtime_error("Отдел не найден");
         }
-        return "";
     }
 
 
-    void print_nodes() const {
-        const Node *current = head->next;
+    T &find_node(const std::string &name) const {
+        if (Node *node_for_find = search(name)) {
+            return node_for_find->data;
+        }
+        throw std::runtime_error("Отдел не найден");
+    }
+
+
+    template
+    <
+        typename Func>
+
+    void for_each(Func func) const {
+        Node *current = head->next;
         while (current) {
-            std::cout << current->data.get_name() << "\n";
+            func(current->data);
             current = current->next;
         }
     }
 };
-# 7 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
+# 8 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
 # 1 "/home/rzms/CLionProjects/saod/cw/./include/statick_stack.h" 1
-
-
 
 
 
@@ -70925,208 +70958,159 @@ public:
 
 template<typename T>
 class Static_stack {
-    struct Node {
-        Node top;
-        T data;
 
-        Node() = default;
+    int32_t top{my_constants::stack_empty};
 
-        explicit Node(const std::string &name) {
-            data = T(name);
+    T data[my_constants::max_size_stack];
+
+    [[nodiscard]] bool is_empty() const {
+        return top == my_constants::stack_empty;
+    }
+
+    [[nodiscard]] bool is_full() const {
+        return top == my_constants::max_size_stack - 1;
+    }
+
+
+    int32_t find(const std::string &name) {
+        for (int32_t i = 0; i < my_constants::max_size_stack; ++i) {
+            if (data[i].get_name() == name) {
+                return i;
+            }
         }
-    };
-};
-# 8 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
-# 1 "/home/rzms/CLionProjects/saod/cw/./include/department.h" 1
-       
-# 1 "/usr/include/c++/15.1.1/utility" 1 3
-# 70 "/usr/include/c++/15.1.1/utility" 3
-# 1 "/usr/include/c++/15.1.1/bits/stl_relops.h" 1 3
-# 62 "/usr/include/c++/15.1.1/bits/stl_relops.h" 3
-
-# 62 "/usr/include/c++/15.1.1/bits/stl_relops.h" 3
-namespace std __attribute__ ((__visibility__ ("default")))
-{
-
-
-  namespace rel_ops __attribute__ ((__deprecated__ ("use '" "<=>" "' instead")))
-  {
-# 86 "/usr/include/c++/15.1.1/bits/stl_relops.h" 3
-    template <class _Tp>
-      inline bool
-      operator!=(const _Tp& __x, const _Tp& __y)
-      { return !(__x == __y); }
-# 99 "/usr/include/c++/15.1.1/bits/stl_relops.h" 3
-    template <class _Tp>
-      inline bool
-      operator>(const _Tp& __x, const _Tp& __y)
-      { return __y < __x; }
-# 112 "/usr/include/c++/15.1.1/bits/stl_relops.h" 3
-    template <class _Tp>
-      inline bool
-      operator<=(const _Tp& __x, const _Tp& __y)
-      { return !(__y < __x); }
-# 125 "/usr/include/c++/15.1.1/bits/stl_relops.h" 3
-    template <class _Tp>
-      inline bool
-      operator>=(const _Tp& __x, const _Tp& __y)
-      { return !(__x < __y); }
-  }
-
-
-}
-# 71 "/usr/include/c++/15.1.1/utility" 2 3
-# 103 "/usr/include/c++/15.1.1/utility" 3
-# 1 "/usr/include/c++/15.1.1/bits/version.h" 1 3
-# 104 "/usr/include/c++/15.1.1/utility" 2 3
-
-namespace std __attribute__ ((__visibility__ ("default")))
-{
-
-
-
-
-  template <typename _Tp, typename _Up = _Tp>
-    constexpr
-    inline _Tp
-    exchange(_Tp& __obj, _Up&& __new_val)
-    noexcept(__and_<is_nothrow_move_constructible<_Tp>,
-      is_nothrow_assignable<_Tp&, _Up>>::value)
-    { return std::__exchange(__obj, std::forward<_Up>(__new_val)); }
-
-
-
-  template<typename _Tp>
-    [[nodiscard]]
-    constexpr add_const_t<_Tp>&
-    as_const(_Tp& __t) noexcept
-    { return __t; }
-
-  template<typename _Tp>
-    void as_const(const _Tp&&) = delete;
-
-
-
-  template<typename _Tp, typename _Up>
-    constexpr bool
-    cmp_equal(_Tp __t, _Up __u) noexcept
-    {
-      static_assert(__is_standard_integer<_Tp>::value);
-      static_assert(__is_standard_integer<_Up>::value);
-
-      if constexpr (is_signed_v<_Tp> == is_signed_v<_Up>)
- return __t == __u;
-      else if constexpr (is_signed_v<_Tp>)
- return __t >= 0 && make_unsigned_t<_Tp>(__t) == __u;
-      else
- return __u >= 0 && __t == make_unsigned_t<_Up>(__u);
+        return my_constants::el_not_found;
     }
-
-  template<typename _Tp, typename _Up>
-    constexpr bool
-    cmp_not_equal(_Tp __t, _Up __u) noexcept
-    { return !std::cmp_equal(__t, __u); }
-
-  template<typename _Tp, typename _Up>
-    constexpr bool
-    cmp_less(_Tp __t, _Up __u) noexcept
-    {
-      static_assert(__is_standard_integer<_Tp>::value);
-      static_assert(__is_standard_integer<_Up>::value);
-
-      if constexpr (is_signed_v<_Tp> == is_signed_v<_Up>)
- return __t < __u;
-      else if constexpr (is_signed_v<_Tp>)
- return __t < 0 || make_unsigned_t<_Tp>(__t) < __u;
-      else
- return __u >= 0 && __t < make_unsigned_t<_Up>(__u);
-    }
-
-  template<typename _Tp, typename _Up>
-    constexpr bool
-    cmp_greater(_Tp __t, _Up __u) noexcept
-    { return std::cmp_less(__u, __t); }
-
-  template<typename _Tp, typename _Up>
-    constexpr bool
-    cmp_less_equal(_Tp __t, _Up __u) noexcept
-    { return !std::cmp_less(__u, __t); }
-
-  template<typename _Tp, typename _Up>
-    constexpr bool
-    cmp_greater_equal(_Tp __t, _Up __u) noexcept
-    { return !std::cmp_less(__t, __u); }
-
-  template<typename _Res, typename _Tp>
-    constexpr bool
-    in_range(_Tp __t) noexcept
-    {
-      static_assert(__is_standard_integer<_Res>::value);
-      static_assert(__is_standard_integer<_Tp>::value);
-      using __gnu_cxx::__int_traits;
-
-      if constexpr (is_signed_v<_Tp> == is_signed_v<_Res>)
- return __int_traits<_Res>::__min <= __t
-   && __t <= __int_traits<_Res>::__max;
-      else if constexpr (is_signed_v<_Tp>)
- return __t >= 0
-   && make_unsigned_t<_Tp>(__t) <= __int_traits<_Res>::__max;
-      else
- return __t <= make_unsigned_t<_Res>(__int_traits<_Res>::__max);
-    }
-
-
-
-
-  template<typename _Tp>
-    [[nodiscard]]
-    constexpr underlying_type_t<_Tp>
-    to_underlying(_Tp __value) noexcept
-    { return static_cast<underlying_type_t<_Tp>>(__value); }
-# 223 "/usr/include/c++/15.1.1/utility" 3
-  [[noreturn,__gnu__::__always_inline__]]
-  inline void
-  unreachable()
-  {
-
-
-
-    __builtin_trap();
-
-
-
-  }
-
-
-
-}
-# 3 "/home/rzms/CLionProjects/saod/cw/./include/department.h" 2
-
-
-
-
-
-# 7 "/home/rzms/CLionProjects/saod/cw/./include/department.h"
-class Department {
-    std::string name;
 
 public:
-    Department() : name("Unknown") {}
 
-    explicit Department(std::string name) : name(std::move(name)) {}
+    void push(const T &new_data) {
+        if (is_full()) {
+            std::cerr << "Ошибка добавления\n";
+            return;
+        }
 
+        ++top;
+        if (top < my_constants::max_size_stack) {
+            data[top] = new_data;
+        }
+    }
+
+
+    void delete_el(const std::string &name) {
+        if (is_empty()) {
+            std::cerr << "Ошибка удаления\n";
+            return;
+        }
+        const int32_t index = find(name);
+        if (index != my_constants::el_not_found) {
+            if (index != top) {
+                data[index] = data[top];
+            }
+            data[top] = T();
+            --top;
+        } else {
+            throw std::runtime_error("Элемент не найден");
+        }
+    }
+
+
+    T &find_el(const std::string &name) {
+        const int32_t index = find(name);
+        if (index != my_constants::el_not_found) {
+            return data[index];
+        }
+        throw std::runtime_error("Элемент не найден");
+    }
+
+
+    template<typename Func>
+    void for_each(Func func) const {
+        if (top != my_constants::stack_empty) {
+            for (int32_t i = 0; i <= top; ++i) {
+                func(data[i]);
+            }
+        }
+    }
 };
 # 9 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
+# 1 "/home/rzms/CLionProjects/saod/cw/./include/person.h" 1
+
+
+
+class Person {
+    std::string name{};
+    int32_t salary{};
+
+public:
+    Person() = default;
+
+    Person(std::string name, const int32_t &salary) : name(std::move(name)), salary(salary) {
+    }
+
+    [[nodiscard]] std::string get_name() const {
+        return name;
+    }
+
+    [[nodiscard]] int32_t get_salary() const {
+        return salary;
+    }
+
+    void set_name(const std::string &name) {
+        this->name = name;
+    }
+
+    void set_salary(const int32_t &salary) {
+        this->salary = salary;
+    }
+};
+# 10 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
+# 1 "/home/rzms/CLionProjects/saod/cw/./include/department.h" 1
+
+
+
+class Department {
+    std::string name;
+    Static_stack<Person> persons;
+
+public:
+    Department() : name("Unknown") {
+    }
+
+    explicit Department(std::string name) : name(std::move(name)) {
+    }
+
+    void add_person(const std::string &name, const int32_t &salary) {
+        persons.push(Person(name, salary));
+    }
+
+    void remove_person(const std::string &name) {
+        persons.delete_el(name);
+    }
+
+    [[nodiscard]] Person &find_person(const std::string &name) {
+        return persons.find_el(name);
+    }
+
+    [[nodiscard]] std::string get_name() const {
+        return name;
+    }
+
+    [[nodiscard]] const Static_stack<Person> &get_stack_persons() const {
+        return persons;
+    }
+};
+# 11 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
 # 1 "/home/rzms/CLionProjects/saod/cw/./include/shop.h" 1
 
 
 
 class Shop {
     std::string name;
-    Static_stack<Department> stack_departments;
+    Dynamic_list<Department> list_departments;
 
 public:
-    Shop() = default;
+    Shop() : name("unknown") {
+    }
 
     explicit Shop(std::string n) : name(std::move(n)) {
     }
@@ -71138,56 +71122,80 @@ public:
     void set_name(const std::string &s) {
         name = s;
     }
+
+    void add_department(const std::string &name) {
+        list_departments.insert_element(name);
+    }
+
+    void remove_department(const std::string &name) {
+        list_departments.delete_element(name);
+    }
+
+    [[nodiscard]] Department &find_department(const std::string &name) const {
+        return list_departments.find_node(name);
+    }
+
+    [[nodiscard]] const Dynamic_list<Department> &get_list_departments() const {
+        return list_departments;
+    }
 };
-# 10 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
-# 1 "/home/rzms/CLionProjects/saod/cw/./include/person.h" 1
-# 9 "/home/rzms/CLionProjects/saod/cw/./include/person.h"
-class Person {
-    std::string name{};
-    int32_t salary{};
-};
-# 11 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
+# 12 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
+
+void print_all_data(const Shop &shop) {
+    std::cout << "Список отделов:\n";
+    shop.get_list_departments().for_each([](const Department &department) {
+        std::cout << department.get_name() << "\n";
+        std::cout << " Список сотрудников отдела:\n";
+        department.get_stack_persons().for_each([](const Person &person) {
+            std::cout << "\t";
+            if (!person.get_name().empty()) {
+                std::cout << "ФИО: Зарплата\n";
+                std::cout << "\t" << person.get_name() << ": " << person.get_salary() << "\n";
+            }
+        });
+        std::cout << "\n";
+    });
+}
+
+void remove_person(const Shop &shop, const std::string &dep, const std::string &name) {
+    try {
+        shop.find_department(dep).remove_person(name);
+    } catch (const std::exception &e) {
+        std::cout << "Ошибка удаления сотрудника\n";
+    }
+}
+
+void remove_department(Shop &shop, const std::string &dep) {
+    try {
+        shop.remove_department(dep);
+    } catch (const std::exception &e) {
+        std::cout << "Ошибка удаления отдела\n";
+    }
+}
 
 int main(int argc, char *argv[]) {
-    Dynamic_list<Shop> list = Dynamic_list<Shop>();
-    list.insert_element("Nokia");
-    list.insert_element("Dyson");
-    list.insert_element("Bosch");
-    list.insert_element("Apple");
+    Shop shop = Shop("Amazon");
 
+    shop.add_department("pc");
+    shop.find_department("pc").add_person("rostislav", 300);
+    shop.add_department("books");
+    shop.find_department("books").add_person("Ivan", 229);
+    shop.add_department("wym");
+    shop.find_department("wym").add_person("Max", 77);
 
-    std::cout << "list1\n";
-    list.print_nodes();
-    std::cout << "\n";
+    print_all_data(shop);
 
-    Dynamic_list<Shop> list2 = list;
-    std::cout << "list2\n";
-    list2.insert_element("Motorolla");
-    list2.print_nodes();
-    std::cout << "\n";
-# 40 "/home/rzms/CLionProjects/saod/cw/main.cpp"
-    Dynamic_list<Shop> list3 = Dynamic_list<Shop>();
-    list3.insert_element("Amazon");
-    list3.insert_element("Tesla");
+    shop.find_department("pc").find_person("rostislav").set_name("Vlad");
 
-    list = list3;
-    list.insert_element("Abazon");
-# 63 "/home/rzms/CLionProjects/saod/cw/main.cpp"
-    std::cout << "list1\n";
-    list.print_nodes();
-    std::cout << "\n";
+    remove_person(shop, "pc", "rostislav");
+    remove_department(shop, "pc");
 
-    std::cout << "list2\n";
-    list2.print_nodes();
-    std::cout << "\n";
+    print_all_data(shop);
 
-    std::cout << "list3\n";
-    list3.print_nodes();
-    std::cout << "\n";
-
+    remove_department(shop, "pc");
     return 
-# 75 "/home/rzms/CLionProjects/saod/cw/main.cpp" 3 4
+# 65 "/home/rzms/CLionProjects/saod/cw/main.cpp" 3 4
           0
-# 75 "/home/rzms/CLionProjects/saod/cw/main.cpp"
+# 65 "/home/rzms/CLionProjects/saod/cw/main.cpp"
                       ;
 }

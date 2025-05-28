@@ -3,7 +3,7 @@
 
 class Shop {
     std::string name;
-    Static_stack<Department> stack_departments;
+    Dynamic_list<Department> list_departments;
 
 public:
     Shop() : name("unknown") {
@@ -18,6 +18,22 @@ public:
 
     void set_name(const std::string &s) {
         name = s;
+    }
+
+    void add_department(const std::string &name) {
+        list_departments.insert_element(name);
+    }
+
+    void remove_department(const std::string &name) {
+        list_departments.delete_element(name);
+    }
+
+    [[nodiscard]] Department &find_department(const std::string &name) const {
+        return list_departments.find_node(name);
+    }
+
+    [[nodiscard]] const Dynamic_list<Department> &get_list_departments() const {
+        return list_departments;
     }
 };
 

@@ -176,10 +176,9 @@ CMakeFiles/cw.dir/main.cpp.o.ddi: \
  /usr/include/c++/15.1.1/bits/formatfwd.h \
  /usr/include/c++/15.1.1/bits/ostream.tcc /usr/include/c++/15.1.1/istream \
  /usr/include/c++/15.1.1/bits/istream.tcc \
+ /home/rzms/CLionProjects/saod/cw/./include/my_const.h \
  /home/rzms/CLionProjects/saod/cw/./include/dynamic_list.h \
  /home/rzms/CLionProjects/saod/cw/./include/statick_stack.h \
+ /home/rzms/CLionProjects/saod/cw/./include/person.h \
  /home/rzms/CLionProjects/saod/cw/./include/department.h \
- /usr/include/c++/15.1.1/utility \
- /usr/include/c++/15.1.1/bits/stl_relops.h \
- /home/rzms/CLionProjects/saod/cw/./include/shop.h \
- /home/rzms/CLionProjects/saod/cw/./include/person.h
+ /home/rzms/CLionProjects/saod/cw/./include/shop.h

@@ -1,7 +1,3 @@
-//
-// Created by rzms on 23.05.25.
-//
-
 #ifndef DYNAMIC_LIST_H
 #define DYNAMIC_LIST_H
 
@@ -23,6 +19,15 @@ class Dynamic_list {
     };
 
     Node *head = nullptr;
+
+    // поиска заданного узла
+    [[nodiscard]] Node *search(const std::string &name) const {
+        Node *current = head->next;
+        while (current && current->data.get_name() != name) {
+            current = current->next;
+        }
+        return current;
+    }
 
 public:
     Dynamic_list() {
@@ -80,50 +85,46 @@ public:
         Node *new_node = new Node(name);
         Node *current = head->next;
 
-        // вставка в начало
-        if (!current || new_node->data.get_name() < current->data.get_name()) {
-            new_node->next = current;
-            new_node->prev = head;
-            if (current) {
-                current->prev = new_node;
+        try {
+            // вставка в начало
+            if (!current || new_node->data.get_name() < current->data.get_name()) {
+                new_node->next = current;
+                new_node->prev = head;
+                if (current) {
+                    current->prev = new_node;
+                }
+                head->next = new_node;
+                return;
             }
-            head->next = new_node;
-            return;
-        }
 
 
-        // поиск позиции для вставки
-        while (current->next && current->data.get_name() < new_node->data.get_name()) {
-            current = current->next;
-        }
-
-        if (current->data.get_name() < new_node->data.get_name()) {
-            // вставка между current и current->next
-            new_node->next = current->next;
-            new_node->prev = current;
-            if (current->next) {
-                current->next->prev = new_node;
+            // поиск позиции для вставки
+            while (current->next && current->data.get_name() < new_node->data.get_name()) {
+                current = current->next;
             }
-            current->next = new_node;
-        } else {
-            // вставка перед current
-            new_node->next = current;
-            new_node->prev = current->prev;
-            current->prev->next = new_node;
-        }
-    }
 
-    // поиска заданного узла
-    [[nodiscard]] Node *search(const std::string &name) const {
-        Node *current = head->next;
-        while (current && current->data.get_name() != name) {
-            current = current->next;
+            if (current->data.get_name() < new_node->data.get_name()) {
+                // вставка между current и current->next
+                new_node->next = current->next;
+                new_node->prev = current;
+                if (current->next) {
+                    current->next->prev = new_node;
+                }
+                current->next = new_node;
+            } else {
+                // вставка перед current
+                new_node->next = current;
+                new_node->prev = current->prev;
+                current->prev->next = new_node;
+            }
+        } catch (...) {
+            std::cerr << "Ошибка добавления отдела\n";
+            delete new_node;
         }
-        return current;
     }
 
     // удаление заданного узла
-    [[nodiscard]] std::string delete_element(const std::string &name) {
+    void delete_element(const std::string &name) {
         if (const Node *node_for_del = search(name)) {
             node_for_del->prev->next = node_for_del->next;
             if (node_for_del->next) {
@@ -131,16 +132,28 @@ public:
             }
             const std::string name_deleted = node_for_del->data.get_name();
             delete node_for_del;
-            return name_deleted;
+        } else {
+            throw std::runtime_error("Отдел не найден");
         }
-        return "";
     }
 
-    // вывод узлов
-    void print_nodes() const {
-        const Node *current = head->next;
+    // поиск заданного узла
+    T &find_node(const std::string &name) const {
+        if (Node *node_for_find = search(name)) {
+            return node_for_find->data;
+        }
+        throw std::runtime_error("Отдел не найден");
+    }
+
+    // поэлементное применение переданной функции
+    template
+    <
+        typename Func>
+
+    void for_each(Func func) const {
+        Node *current = head->next;
         while (current) {
-            std::cout << current->data.get_name() << "\n";
+            func(current->data);
             current = current->next;
         }
     }
