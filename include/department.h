@@ -31,6 +31,11 @@ public:
     [[nodiscard]] const Static_stack<Person> &get_stack_persons() const {
         return persons;
     }
+
+    template <typename Func>
+    void for_each_person(Func func) const {
+        persons.for_each(func);
+    }
 };
 
 #endif //DEPARTMENT_H

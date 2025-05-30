@@ -1,5 +1,6 @@
 #ifndef SHOP_H
 #define SHOP_H
+#include <sstream>
 
 class Shop {
     std::string name;
@@ -34,6 +35,75 @@ public:
 
     [[nodiscard]] const Dynamic_list<Department> &get_list_departments() const {
         return list_departments;
+    }
+
+    void save_to_file(const std::string &filename) const {
+        std::ofstream out_file(filename);
+        if (!out_file.is_open()) {
+            throw std::runtime_error("Не удалось открыть файл для записи: " + filename);
+        }
+
+        // ЗапV Сохраняем имя магазина
+        out_file << "Shop: " << name << "\n";
+
+        // Сохраняем отделы
+        out_file << "Departments:\n";
+        list_departments.for_each([&out_file](const Department &dept) {
+            out_file << dept.get_name() << "\n";
+            // Перебираем сотрудников отдела
+            dept.for_each_person([&out_file](const Person &person) {
+                out_file << "  " << person.get_name() << " " << person.get_salary() << "\n";
+            });
+        });
+
+        out_file.close();
+    }
+
+    void load_from_file(const std::string &filename) {
+        std::ifstream in_file(filename);
+        if (!in_file.is_open()) {
+            throw std::runtime_error("Не удалось открыть файл для чтения: " + filename);
+        }
+        std::string line;
+        // чтение имя магазина
+        if (std::getline(in_file, line) && line.find("Shop: ") == 0) {
+            name = line.substr(6); // извлечение имени после "Shop: "
+        } else {
+            throw std::runtime_error("Неверный формат файла: ожидалось 'Shop: <name>'");
+        }
+
+        list_departments = Dynamic_list<Department>();
+
+        if (!std::getline(in_file, line) || line != "Departments:") {
+            throw std::runtime_error("Неверный формат файла: ожидалось 'Departments:'");
+        }
+
+        Department *current_dept = nullptr;
+        while (std::getline(in_file, line)) {
+            if (line.empty()) {
+                continue;
+            }
+            if (line[0] != ' ') {
+                // Новая строка без отступа — это отдел
+                add_department(line);
+                try {
+                    current_dept = &find_department(line);
+                } catch (const std::runtime_error &e) {
+                    throw std::runtime_error("Ошибка при добавлении отдела: " + line);
+                }
+            } else if (line[0] == ' ' && line[1] == ' ' && current_dept) {
+                // Строка с отступом — это сотрудник
+                std::istringstream iss(line.substr(2)); // Убираем два пробела
+                std::string person_name;
+                if (int32_t salary; iss >> person_name >> salary) {
+                    current_dept->add_person(person_name, salary);
+                } else {
+                    throw std::runtime_error("Неверный формат данных менеджера: " + line);
+                }
+            }
+        }
+
+        in_file.close();
     }
 };
 

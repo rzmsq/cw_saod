@@ -175,10 +175,21 @@ CMakeFiles/cw.dir/main.cpp.o.ddi: \
  /usr/include/c++/15.1.1/span /usr/include/c++/15.1.1/bits/monostate.h \
  /usr/include/c++/15.1.1/bits/formatfwd.h \
  /usr/include/c++/15.1.1/bits/ostream.tcc /usr/include/c++/15.1.1/istream \
- /usr/include/c++/15.1.1/bits/istream.tcc \
+ /usr/include/c++/15.1.1/bits/istream.tcc /usr/include/c++/15.1.1/fstream \
+ /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/basic_file.h \
+ /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/c++io.h \
+ /usr/include/c++/15.1.1/bits/fstream.tcc \
  /home/rzms/CLionProjects/saod/cw/./include/my_const.h \
+ /usr/include/c++/15.1.1/unordered_map \
+ /usr/include/c++/15.1.1/bits/unordered_map.h \
+ /usr/include/c++/15.1.1/bits/hashtable.h \
+ /usr/include/c++/15.1.1/bits/hashtable_policy.h \
+ /usr/include/c++/15.1.1/ext/aligned_buffer.h \
+ /usr/include/c++/15.1.1/bits/node_handle.h \
+ /usr/include/c++/15.1.1/bits/erase_if.h \
  /home/rzms/CLionProjects/saod/cw/./include/dynamic_list.h \
  /home/rzms/CLionProjects/saod/cw/./include/statick_stack.h \
  /home/rzms/CLionProjects/saod/cw/./include/person.h \
  /home/rzms/CLionProjects/saod/cw/./include/department.h \
- /home/rzms/CLionProjects/saod/cw/./include/shop.h
+ /home/rzms/CLionProjects/saod/cw/./include/shop.h \
+ /usr/include/c++/15.1.1/sstream /usr/include/c++/15.1.1/bits/sstream.tcc
