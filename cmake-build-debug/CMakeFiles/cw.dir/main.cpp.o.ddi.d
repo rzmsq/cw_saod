@@ -179,7 +179,7 @@ CMakeFiles/cw.dir/main.cpp.o.ddi: \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/basic_file.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/c++io.h \
  /usr/include/c++/15.1.1/bits/fstream.tcc \
- /home/rzms/CLionProjects/saod/cw/./include/my_const.h \
+ /home/rzms/CLionProjects/saod/cw/./include/my_var_and_const.h \
  /usr/include/c++/15.1.1/unordered_map \
  /usr/include/c++/15.1.1/bits/unordered_map.h \
  /usr/include/c++/15.1.1/bits/hashtable.h \
@@ -188,7 +188,7 @@ CMakeFiles/cw.dir/main.cpp.o.ddi: \
  /usr/include/c++/15.1.1/bits/node_handle.h \
  /usr/include/c++/15.1.1/bits/erase_if.h \
  /home/rzms/CLionProjects/saod/cw/./include/dynamic_list.h \
- /home/rzms/CLionProjects/saod/cw/./include/statick_stack.h \
+ /home/rzms/CLionProjects/saod/cw/./include/static_stack.h \
  /home/rzms/CLionProjects/saod/cw/./include/person.h \
  /home/rzms/CLionProjects/saod/cw/./include/department.h \
  /home/rzms/CLionProjects/saod/cw/./include/shop.h \

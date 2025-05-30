@@ -5,20 +5,27 @@
 #include <fstream>
 #include <limits>
 
-#include "./include/my_const.h"
+#include "./include/my_var_and_const.h"
 #include "./include/dynamic_list.h"
-#include "./include/statick_stack.h"
+#include "./include/static_stack.h"
 #include "./include/person.h"
 #include "./include/department.h"
 #include "./include/shop.h"
 
+// функция получения строки от пользователя
 std::string get_str(const std::string &str_out) {
-    std::cout << str_out;
     std::string str;
-    std::getline(std::cin, str);
+    do {
+        std::cout << str_out;
+        std::getline(std::cin, str);
+        if (str.empty()) {
+            std::cout << "Поле не может быть пустым.\n";
+        }
+    } while (str.empty());
     return str;
 }
 
+// проверка допустимости ввода числового значения
 bool is_Valid_Int_32(const std::string &str) {
     if (str.empty()) {
         return false;
@@ -50,10 +57,12 @@ bool is_Valid_Int_32(const std::string &str) {
     }
 }
 
+// вывод отдельного менеджера
 void print_person(const Person &person) {
     std::cout << "\t" << person.get_name() << ": " << person.get_salary() << "\n";
 }
 
+// вывод отдела
 void print_department(const Department &department) {
     std::cout << department.get_name() << "\n";
     std::cout << " Список менеджеров отдела:\n";
@@ -66,6 +75,7 @@ void print_department(const Department &department) {
     std::cout << "\n";
 }
 
+// вывод всей информации по магазину
 void print_all_data(const Shop *shop) {
     std::cout << shop->get_name() << "\nСписок отделов:\n";
     shop->get_list_departments().for_each([](const Department &department) {
@@ -73,6 +83,7 @@ void print_all_data(const Shop *shop) {
     });
 }
 
+// удаление менеджера
 void remove_person(const Shop *shop, const std::string &dep, const std::string &name) {
     try {
         shop->find_department(dep).remove_person(name);
@@ -81,6 +92,7 @@ void remove_person(const Shop *shop, const std::string &dep, const std::string &
     }
 }
 
+// удаление отдела
 void remove_department(Shop *shop, const std::string &dep) {
     try {
         shop->remove_department(dep);
@@ -89,6 +101,7 @@ void remove_department(Shop *shop, const std::string &dep) {
     }
 }
 
+// сохранение в файл
 void save_to_file(const Shop *shop) {
     try {
         shop->save_to_file("shop_data.txt");
@@ -98,6 +111,7 @@ void save_to_file(const Shop *shop) {
     }
 }
 
+// загрузка из файла
 void load_from_file(Shop *shop) {
     try {
         shop->load_from_file("shop_data.txt");
@@ -107,10 +121,12 @@ void load_from_file(Shop *shop) {
     }
 }
 
+// поиск отдела
 Department &find_department(const Shop *shop, const std::string &department) {
     return shop->find_department(department);
 }
 
+// поиск менеджера
 Person &find_person(const Shop *shop, const std::string &person_to_find) {
     Person *result = nullptr;
     const Department *result_dep = nullptr;
@@ -132,14 +148,14 @@ Person &find_person(const Shop *shop, const std::string &person_to_find) {
     return *result;
 }
 
+// создание магазина
 Shop *create_new_shop() {
-    std::cout << "Введите название магазина\n";
-    std::string name;
-    std::getline(std::cin, name);
+    const std::string name = get_str("Введите название магазина\n");
 
     return new Shop(name);
 }
 
+// добавление отдела
 void add_department(Shop *shop) {
     if (shop) {
         const std::string name = get_str("Введите название отдела\n");
@@ -149,6 +165,7 @@ void add_department(Shop *shop) {
     }
 }
 
+// добавление менеджера
 void add_person(const Shop *shop, const std::string &person_name, const std::string &salary_str) {
     if (shop) {
         if (is_Valid_Int_32(salary_str)) {
@@ -166,11 +183,13 @@ void add_person(const Shop *shop, const std::string &person_name, const std::str
     }
 }
 
+// удаление магазина
 void del_shop(Shop *&shop) {
     delete shop;
     shop = nullptr;
 }
 
+// обработка введенной операции
 void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
     if (!shop && op != my_var_and_const::Operation::Create_new_magazine &&
         op != my_var_and_const::Operation::Load_file &&
@@ -179,9 +198,14 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
         return;
     }
     switch (op) {
-        case my_var_and_const::Operation::Create_new_magazine:
+        case my_var_and_const::Operation::Create_new_magazine: {
+            if (shop) {
+                delete shop;
+                shop = nullptr;
+            }
             shop = create_new_shop();
             break;
+        }
         case my_var_and_const::Operation::Add_dep:
             add_department(shop);
             break;
@@ -191,13 +215,17 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Add_pers: {
-            const std::string name = get_str("Введите Имя менеджера\n");
+            const std::string name = get_str("Введите Фамилию менеджера\n");
+            if (name.contains(' ')) {
+                std::cout << "Ошибка.Введите фамилию без пробелов\n";
+                return;
+            }
             const std::string salary_str = get_str("Введите Зарплату менеджера\n");
             add_person(shop, name, salary_str);
             break;
         }
         case my_var_and_const::Operation::Del_pers: {
-            const std::string name = get_str("Введите Имя менеджера\n");
+            const std::string name = get_str("Введите Фамилию менеджера\n");
             try {
                 find_person(shop, name);
             } catch (const std::runtime_error &e) {
@@ -218,7 +246,7 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Find_pers: {
-            const std::string name = get_str("Введите Имя менеджера\n");
+            const std::string name = get_str("Введите Фамилию менеджера\n");
             try {
                 find_person(shop, name);
             } catch (const std::runtime_error &e) {
@@ -235,6 +263,10 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Load_file: {
+            if (shop) {
+                delete shop;
+                shop = nullptr;
+            }
             shop = new Shop();
             load_from_file(shop);
             break;
@@ -255,9 +287,11 @@ int main() {
     bool isRun{true};
 
     while (isRun) {
+        // вывод допустимых операций и считывание ввода пользователя
         std::cout << my_var_and_const::menu_str;
         std::getline(std::cin, op);
 
+        // обработка введнной строки пользователя
         if (auto it = my_var_and_const::operationMap.find(op); it != my_var_and_const::operationMap.end()) {
             process_operation(shop, it->second);
             if (it->second == my_var_and_const::Operation::Exit) {
@@ -265,6 +299,7 @@ int main() {
             }
         }
     }
+
     delete shop;
     return EXIT_SUCCESS;
 }

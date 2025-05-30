@@ -72727,11 +72727,7 @@ namespace std __attribute__ ((__visibility__ ("default")))
 # 6 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
 
 
-# 1 "/home/rzms/CLionProjects/saod/cw/./include/my_const.h" 1
-
-
-
-
+# 1 "/home/rzms/CLionProjects/saod/cw/./include/my_var_and_const.h" 1
 
 
 
@@ -79193,10 +79189,11 @@ namespace std __attribute__ ((__visibility__ ("default")))
     }
 
 }
-# 9 "/home/rzms/CLionProjects/saod/cw/./include/my_const.h" 2
+# 5 "/home/rzms/CLionProjects/saod/cw/./include/my_var_and_const.h" 2
 
 
-# 10 "/home/rzms/CLionProjects/saod/cw/./include/my_const.h"
+
+# 7 "/home/rzms/CLionProjects/saod/cw/./include/my_var_and_const.h"
 namespace my_var_and_const {
     constexpr size_t max_size_stack{16};
     constexpr int32_t stack_empty{-1};
@@ -79208,12 +79205,13 @@ namespace my_var_and_const {
             "4 - Добавить менеджера\n"
             "5 - Удалить менеджера\n"
             "6 - Найти отдел\n"
-            "7 - Найти сотрудника\n"
-            "8 - Показать все отделы и сотрудников\n"
+            "7 - Найти менеджера\n"
+            "8 - Показать все отделы и менеджера\n"
             "9 - Удалить магазин\n"
             "10 - Загрузить данные из файла\n"
             "11 - Сохранить данные в файле\n"
             "0 - Выход\n";
+
 
     enum class Operation {
         Create_new_magazine,
@@ -79253,9 +79251,11 @@ namespace my_var_and_const {
 
 template<typename T>
 class Dynamic_list {
+
     struct Node {
         Node *next, *prev;
         T data;
+
 
         Node(): next(nullptr), prev(nullptr) {
             data = T();
@@ -79266,6 +79266,7 @@ class Dynamic_list {
             data = T(name);
         }
     };
+
 
     Node *head = nullptr;
 
@@ -79379,7 +79380,6 @@ public:
             if (node_for_del->next) {
                 node_for_del->next->prev = node_for_del->prev;
             }
-            const std::string name_deleted = node_for_del->data.get_name();
             delete node_for_del;
         } else {
             throw std::runtime_error("Отдел не найден");
@@ -79395,10 +79395,7 @@ public:
     }
 
 
-    template
-    <
-        typename Func>
-
+    template<typename Func>
     void for_each(Func func) const {
         Node *current = head->next;
         while (current) {
@@ -79408,7 +79405,7 @@ public:
     }
 };
 # 10 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
-# 1 "/home/rzms/CLionProjects/saod/cw/./include/statick_stack.h" 1
+# 1 "/home/rzms/CLionProjects/saod/cw/./include/static_stack.h" 1
 
 
 
@@ -79421,9 +79418,11 @@ class Static_stack {
 
     T data[my_var_and_const::max_size_stack];
 
+
     [[nodiscard]] bool is_empty() const {
         return top == my_var_and_const::stack_empty;
     }
+
 
     [[nodiscard]] bool is_full() const {
         return top == my_var_and_const::max_size_stack - 1;
@@ -79493,27 +79492,33 @@ public:
 
 
 
+
 class Person {
     std::string name{};
     int32_t salary{};
 
 public:
+
     Person() = default;
 
     Person(std::string name, const int32_t &salary) : name(std::move(name)), salary(salary) {
     }
 
+
     [[nodiscard]] std::string get_name() const {
         return name;
     }
+
 
     [[nodiscard]] int32_t get_salary() const {
         return salary;
     }
 
+
     void set_name(const std::string &name) {
         this->name = name;
     }
+
 
     void set_salary(const int32_t &salary) {
         this->salary = salary;
@@ -79524,36 +79529,44 @@ public:
 
 
 
+
 class Department {
     std::string name;
     Static_stack<Person> persons;
 
 public:
+
     Department() : name("Unknown") {
     }
 
     explicit Department(std::string name) : name(std::move(name)) {
     }
 
+
     void add_person(const std::string &name, const int32_t &salary) {
         persons.push(Person(name, salary));
     }
+
 
     void remove_person(const std::string &name) {
         persons.delete_el(name);
     }
 
+
     [[nodiscard]] Person &find_person(const std::string &name) {
         return persons.find_el(name);
     }
+
 
     [[nodiscard]] std::string get_name() const {
         return name;
     }
 
+
     [[nodiscard]] const Static_stack<Person> &get_stack_persons() const {
         return persons;
     }
+
 
     template <typename Func>
     void for_each_person(Func func) const {
@@ -80763,41 +80776,50 @@ namespace std __attribute__ ((__visibility__ ("default")))
 # 4 "/home/rzms/CLionProjects/saod/cw/./include/shop.h" 2
 
 
-# 5 "/home/rzms/CLionProjects/saod/cw/./include/shop.h"
+
+# 6 "/home/rzms/CLionProjects/saod/cw/./include/shop.h"
 class Shop {
     std::string name;
     Dynamic_list<Department> list_departments;
 
 public:
+
     Shop() : name("unknown") {
     }
 
     explicit Shop(std::string n) : name(std::move(n)) {
     }
 
+
     [[nodiscard]] std::string get_name() const {
         return name;
     }
+
 
     void set_name(const std::string &s) {
         name = s;
     }
 
+
     void add_department(const std::string &name) {
         list_departments.insert_element(name);
     }
+
 
     void remove_department(const std::string &name) {
         list_departments.delete_element(name);
     }
 
+
     [[nodiscard]] Department &find_department(const std::string &name) const {
         return list_departments.find_node(name);
     }
 
+
     [[nodiscard]] const Dynamic_list<Department> &get_list_departments() const {
         return list_departments;
     }
+
 
     void save_to_file(const std::string &filename) const {
         std::ofstream out_file(filename);
@@ -80820,6 +80842,7 @@ public:
 
         out_file.close();
     }
+
 
     void load_from_file(const std::string &filename) {
         std::ifstream in_file(filename);
@@ -80870,12 +80893,19 @@ public:
 };
 # 14 "/home/rzms/CLionProjects/saod/cw/main.cpp" 2
 
+
 std::string get_str(const std::string &str_out) {
-    std::cout << str_out;
     std::string str;
-    std::getline(std::cin, str);
+    do {
+        std::cout << str_out;
+        std::getline(std::cin, str);
+        if (str.empty()) {
+            std::cout << "Поле не может быть пустым.\n";
+        }
+    } while (str.empty());
     return str;
 }
+
 
 bool is_Valid_Int_32(const std::string &str) {
     if (str.empty()) {
@@ -80908,9 +80938,11 @@ bool is_Valid_Int_32(const std::string &str) {
     }
 }
 
+
 void print_person(const Person &person) {
     std::cout << "\t" << person.get_name() << ": " << person.get_salary() << "\n";
 }
+
 
 void print_department(const Department &department) {
     std::cout << department.get_name() << "\n";
@@ -80924,12 +80956,14 @@ void print_department(const Department &department) {
     std::cout << "\n";
 }
 
+
 void print_all_data(const Shop *shop) {
     std::cout << shop->get_name() << "\nСписок отделов:\n";
     shop->get_list_departments().for_each([](const Department &department) {
         print_department(department);
     });
 }
+
 
 void remove_person(const Shop *shop, const std::string &dep, const std::string &name) {
     try {
@@ -80939,6 +80973,7 @@ void remove_person(const Shop *shop, const std::string &dep, const std::string &
     }
 }
 
+
 void remove_department(Shop *shop, const std::string &dep) {
     try {
         shop->remove_department(dep);
@@ -80946,6 +80981,7 @@ void remove_department(Shop *shop, const std::string &dep) {
         std::cerr << e.what() << "\n";
     }
 }
+
 
 void save_to_file(const Shop *shop) {
     try {
@@ -80956,6 +80992,7 @@ void save_to_file(const Shop *shop) {
     }
 }
 
+
 void load_from_file(Shop *shop) {
     try {
         shop->load_from_file("shop_data.txt");
@@ -80965,9 +81002,11 @@ void load_from_file(Shop *shop) {
     }
 }
 
+
 Department &find_department(const Shop *shop, const std::string &department) {
     return shop->find_department(department);
 }
+
 
 Person &find_person(const Shop *shop, const std::string &person_to_find) {
     Person *result = nullptr;
@@ -80990,13 +81029,13 @@ Person &find_person(const Shop *shop, const std::string &person_to_find) {
     return *result;
 }
 
+
 Shop *create_new_shop() {
-    std::cout << "Введите название магазина\n";
-    std::string name;
-    std::getline(std::cin, name);
+    const std::string name = get_str("Введите название магазина\n");
 
     return new Shop(name);
 }
+
 
 void add_department(Shop *shop) {
     if (shop) {
@@ -81006,6 +81045,7 @@ void add_department(Shop *shop) {
         std::cout << "Ошибка. Магазин не создан\n";
     }
 }
+
 
 void add_person(const Shop *shop, const std::string &person_name, const std::string &salary_str) {
     if (shop) {
@@ -81024,10 +81064,12 @@ void add_person(const Shop *shop, const std::string &person_name, const std::str
     }
 }
 
+
 void del_shop(Shop *&shop) {
     delete shop;
     shop = nullptr;
 }
+
 
 void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
     if (!shop && op != my_var_and_const::Operation::Create_new_magazine &&
@@ -81037,9 +81079,14 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
         return;
     }
     switch (op) {
-        case my_var_and_const::Operation::Create_new_magazine:
+        case my_var_and_const::Operation::Create_new_magazine: {
+            if (shop) {
+                delete shop;
+                shop = nullptr;
+            }
             shop = create_new_shop();
             break;
+        }
         case my_var_and_const::Operation::Add_dep:
             add_department(shop);
             break;
@@ -81049,13 +81096,17 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Add_pers: {
-            const std::string name = get_str("Введите Имя менеджера\n");
+            const std::string name = get_str("Введите Фамилию менеджера\n");
+            if (name.contains(' ')) {
+                std::cout << "Ошибка.Введите фамилию без пробелов\n";
+                return;
+            }
             const std::string salary_str = get_str("Введите Зарплату менеджера\n");
             add_person(shop, name, salary_str);
             break;
         }
         case my_var_and_const::Operation::Del_pers: {
-            const std::string name = get_str("Введите Имя менеджера\n");
+            const std::string name = get_str("Введите Фамилию менеджера\n");
             try {
                 find_person(shop, name);
             } catch (const std::runtime_error &e) {
@@ -81076,7 +81127,7 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Find_pers: {
-            const std::string name = get_str("Введите Имя менеджера\n");
+            const std::string name = get_str("Введите Фамилию менеджера\n");
             try {
                 find_person(shop, name);
             } catch (const std::runtime_error &e) {
@@ -81093,6 +81144,10 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Load_file: {
+            if (shop) {
+                delete shop;
+                shop = nullptr;
+            }
             shop = new Shop();
             load_from_file(shop);
             break;
@@ -81113,8 +81168,10 @@ int main() {
     bool isRun{true};
 
     while (isRun) {
+
         std::cout << my_var_and_const::menu_str;
         std::getline(std::cin, op);
+
 
         if (auto it = my_var_and_const::operationMap.find(op); it != my_var_and_const::operationMap.end()) {
             process_operation(shop, it->second);
@@ -81123,10 +81180,11 @@ int main() {
             }
         }
     }
+
     delete shop;
     return 
-# 269 "/home/rzms/CLionProjects/saod/cw/main.cpp" 3 4
+# 304 "/home/rzms/CLionProjects/saod/cw/main.cpp" 3 4
           0
-# 269 "/home/rzms/CLionProjects/saod/cw/main.cpp"
+# 304 "/home/rzms/CLionProjects/saod/cw/main.cpp"
                       ;
 }

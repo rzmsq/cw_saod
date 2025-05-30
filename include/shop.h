@@ -2,51 +2,60 @@
 #define SHOP_H
 #include <sstream>
 
+// класс описывающий Магазин
 class Shop {
     std::string name;
-    Dynamic_list<Department> list_departments;
+    Dynamic_list<Department> list_departments; // динамический двунаправленный список отделов
 
 public:
+    // переопределение конструкторов
     Shop() : name("unknown") {
     }
 
     explicit Shop(std::string n) : name(std::move(n)) {
     }
 
+    // геттер поля имени
     [[nodiscard]] std::string get_name() const {
         return name;
     }
 
+    // сеттер поля имени
     void set_name(const std::string &s) {
         name = s;
     }
 
+    // добавление отдела
     void add_department(const std::string &name) {
         list_departments.insert_element(name);
     }
 
+    // удаление отдела
     void remove_department(const std::string &name) {
         list_departments.delete_element(name);
     }
 
+    // поиск отдела
     [[nodiscard]] Department &find_department(const std::string &name) const {
         return list_departments.find_node(name);
     }
 
+    // геттер списка отделов
     [[nodiscard]] const Dynamic_list<Department> &get_list_departments() const {
         return list_departments;
     }
 
+    // сохранение магазина в файл
     void save_to_file(const std::string &filename) const {
         std::ofstream out_file(filename);
         if (!out_file.is_open()) {
             throw std::runtime_error("Не удалось открыть файл для записи: " + filename);
         }
 
-        // ЗапV Сохраняем имя магазина
+        // сохраняем имя магазина
         out_file << "Shop: " << name << "\n";
 
-        // Сохраняем отделы
+        // сохраняем отделы
         out_file << "Departments:\n";
         list_departments.for_each([&out_file](const Department &dept) {
             out_file << dept.get_name() << "\n";
@@ -59,6 +68,7 @@ public:
         out_file.close();
     }
 
+    // загрузка магазина из файла
     void load_from_file(const std::string &filename) {
         std::ifstream in_file(filename);
         if (!in_file.is_open()) {

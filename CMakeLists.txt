@@ -8,5 +8,5 @@ add_executable(cw main.cpp
         include/department.h
         include/dynamic_list.h
         include/person.h
-        include/statick_stack.h
-        include/my_const.h)
+        include/static_stack.h
+        include/my_var_and_const.h)

@@ -1,12 +1,9 @@
-//
-// Created by rzms on 26.05.25.
-//
-
 #ifndef MY_CONST_H
 #define MY_CONST_H
 
 #include <unordered_map>
 
+// пространство имён для использования констант, переменных, перечислений
 namespace my_var_and_const {
     constexpr size_t max_size_stack{16};
     constexpr int32_t stack_empty{-1};
@@ -18,13 +15,14 @@ namespace my_var_and_const {
             "4 - Добавить менеджера\n"
             "5 - Удалить менеджера\n"
             "6 - Найти отдел\n"
-            "7 - Найти сотрудника\n"
-            "8 - Показать все отделы и сотрудников\n"
+            "7 - Найти менеджера\n"
+            "8 - Показать все отделы и менеджера\n"
             "9 - Удалить магазин\n"
             "10 - Загрузить данные из файла\n"
             "11 - Сохранить данные в файле\n"
             "0 - Выход\n";
 
+    // операции допустимые пользователю
     enum class Operation {
         Create_new_magazine,
         Add_dep,

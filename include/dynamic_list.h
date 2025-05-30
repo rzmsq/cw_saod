@@ -4,10 +4,12 @@
 // динамический упорядоченный двунаправленный список
 template<typename T>
 class Dynamic_list {
+    // узел, содержащий ссылку на следующий и предыдущий узел и саму информацию
     struct Node {
         Node *next, *prev;
         T data;
 
+        // переопределение конструкторов структуры
         Node(): next(nullptr), prev(nullptr) {
             data = T();
         }
@@ -18,6 +20,7 @@ class Dynamic_list {
         }
     };
 
+    // указатель головного элемента
     Node *head = nullptr;
 
     // поиска заданного узла
@@ -130,7 +133,6 @@ public:
             if (node_for_del->next) {
                 node_for_del->next->prev = node_for_del->prev;
             }
-            const std::string name_deleted = node_for_del->data.get_name();
             delete node_for_del;
         } else {
             throw std::runtime_error("Отдел не найден");
@@ -146,10 +148,7 @@ public:
     }
 
     // поэлементное применение переданной функции
-    template
-    <
-        typename Func>
-
+    template<typename Func>
     void for_each(Func func) const {
         Node *current = head->next;
         while (current) {

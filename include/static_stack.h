@@ -10,10 +10,12 @@ class Static_stack {
     // массив-стек
     T data[my_var_and_const::max_size_stack];
 
+    // проверка пустоты стека
     [[nodiscard]] bool is_empty() const {
         return top == my_var_and_const::stack_empty;
     }
 
+    // проверка заполненности стека
     [[nodiscard]] bool is_full() const {
         return top == my_var_and_const::max_size_stack - 1;
     }
@@ -32,8 +34,7 @@ public:
     // Добавление в стек
     void push(const T &new_data) {
         if (is_full()) {
-            std::cerr << "Ошибка добавления\n";
-            return;
+            throw std::runtime_error("Ошибка добавления\n");
         }
 
         ++top;
@@ -45,8 +46,7 @@ public:
     // Удаление из стека
     void delete_el(const std::string &name) {
         if (is_empty()) {
-            std::cerr << "Ошибка удаления\n";
-            return;
+            throw std::runtime_error("Ошибка удаления\n");
         }
         const int32_t index = find(name);
         if (index != my_var_and_const::el_not_found) {
