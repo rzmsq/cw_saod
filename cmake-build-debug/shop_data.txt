@@ -1,0 +1,25 @@
+Shop: Amazon
+Departments:
+books
+  Ivan 229
+pc
+  rostislav 300
+  Misha 12
+products
+  Petya 11
+wym
+  Max 77
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
+  Misha 88
