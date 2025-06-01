@@ -46,7 +46,6 @@ bool is_Valid_Int_32(const std::string &str) {
             value > std::numeric_limits<int32_t>::max()) {
             return false;
         }
-
         return true;
     } catch (const std::invalid_argument &) {
         // Если строка не является числом
@@ -66,7 +65,7 @@ void print_person(const Person &person) {
 void print_department(const Department &department) {
     std::cout << department.get_name() << "\n";
     std::cout << " Список менеджеров отдела:\n";
-    std::cout << "\tФИО: Зарплата (у.е.)\n";
+    std::cout << "\tФамилия: Зарплата (у.е.)\n";
     department.get_stack_persons().for_each([](const Person &person) {
         if (!person.get_name().empty()) {
             print_person(person);
@@ -84,9 +83,9 @@ void print_all_data(const Shop *shop) {
 }
 
 // удаление менеджера
-void remove_person(const Shop *shop, const std::string &dep, const std::string &name) {
+void remove_person(const Shop *shop, const std::string &dep) {
     try {
-        shop->find_department(dep).remove_person(name);
+        shop->find_department(dep).remove_person();
     } catch (const std::exception &e) {
         std::cerr << e.what() << "\n";
     }
@@ -158,10 +157,16 @@ Shop *create_new_shop() {
 // добавление отдела
 void add_department(Shop *shop) {
     if (shop) {
-        const std::string name = get_str("Введите название отдела\n");
-        shop->add_department(name);
+        const std::string dep_name = get_str("Введите название Отдела\n");
+        try {
+            find_department(shop, dep_name);
+        } catch (const std::runtime_error &) {
+            shop->add_department(dep_name);
+            return;
+        }
+        std::cerr << "Ошибка. Отдел уже существует";
     } else {
-        std::cout << "Ошибка. Магазин не создан\n";
+        std::cerr << "Ошибка. Магазин не создан\n";
     }
 }
 
@@ -225,15 +230,8 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Del_pers: {
-            const std::string name = get_str("Введите Фамилию менеджера\n");
-            try {
-                find_person(shop, name);
-            } catch (const std::runtime_error &e) {
-                std::cerr << e.what() << "\n";
-                break;
-            }
-            const std::string dep_name = get_str("Введите название Отдела\n");
-            remove_person(shop, dep_name, name);
+            const std::string dep_name = get_str("Введите название Отдела, откуда удалить Менеджера\n");
+            remove_person(shop, dep_name);
             break;
         }
         case my_var_and_const::Operation::Find_dep: {
@@ -291,7 +289,7 @@ int main() {
         std::cout << my_var_and_const::menu_str;
         std::getline(std::cin, op);
 
-        // обработка введнной строки пользователя
+        // обработка введённой строки пользователя
         if (auto it = my_var_and_const::operationMap.find(op); it != my_var_and_const::operationMap.end()) {
             process_operation(shop, it->second);
             if (it->second == my_var_and_const::Operation::Exit) {

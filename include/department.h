@@ -20,8 +20,8 @@ public:
     }
 
     // удаление менеджера
-    void remove_person(const std::string &name) {
-        persons.delete_el(name);
+    void remove_person() {
+        persons.pop();
     }
 
     // поиск менеджера

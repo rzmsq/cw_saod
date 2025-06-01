@@ -1,0 +1,62 @@
+@startuml
+' Определяем классы
+class Person {
+  -string name
+  -int32_t salary
+  +get_name() : string
+  +get_salary() : int32_t
+  +set_name(name : string)
+  +set_salary(salary : int32_t)
+}
+
+class "Static_stack<Person>" as StaticStackPerson {
+  -int32_t top
+  -Person data[max_size_stack]
+  +push(new_data : Person)
+  +pop() : Person
+  +find_el(name : string) : Person&
+  +for_each(func)
+  -is_empty() : bool
+  -is_full() : bool
+  -find(name : string) : int32_t
+}
+
+class Department {
+  -string name
+  -Static_stack<Person> persons
+  +add_person(name : string, salary : int32_t)
+  +remove_person()
+  +find_person(name : string) : Person&
+  +get_name() : string
+  +get_stack_persons() : Static_stack<Person>&
+  +for_each_person(func)
+}
+
+class "Dynamic_list<Department>" as DynamicListDepartment {
+  -Node* head
+  +insert_element(name : string)
+  +delete_element(name : string)
+  +find_node(name : string) : Department&
+  +for_each(func)
+}
+
+class Shop {
+  -string name
+  -Dynamic_list<Department> list_departments
+  +get_name() : string
+  +set_name(s : string)
+  +add_department(name : string)
+  +remove_department(name : string)
+  +find_department(name : string) : Department&
+  +get_list_departments() : Dynamic_list<Department>&
+  +save_to_file(filename : string)
+  +load_from_file(filename : string)
+}
+
+' Определяем отношения
+Shop *--> DynamicListDepartment
+Department *--> StaticStackPerson
+StaticStackPerson *--> Person
+DynamicListDepartment *--> Department
+
+@enduml

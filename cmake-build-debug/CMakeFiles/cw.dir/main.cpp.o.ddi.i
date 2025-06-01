@@ -79442,8 +79442,7 @@ public:
 
     void push(const T &new_data) {
         if (is_full()) {
-            std::cerr << "Ошибка добавления\n";
-            return;
+            throw std::runtime_error("Ошибка добавления\n");
         }
 
         ++top;
@@ -79453,21 +79452,12 @@ public:
     }
 
 
-    void delete_el(const std::string &name) {
+    void pop() {
         if (is_empty()) {
-            std::cerr << "Ошибка удаления\n";
-            return;
+            throw std::runtime_error("Ошибка удаления\n");
         }
-        const int32_t index = find(name);
-        if (index != my_var_and_const::el_not_found) {
-            if (index != top) {
-                data[index] = data[top];
-            }
-            data[top] = T();
-            --top;
-        } else {
-            throw std::runtime_error("Элемент не найден");
-        }
+        data[top] = T();
+        --top;
     }
 
 
@@ -79548,8 +79538,8 @@ public:
     }
 
 
-    void remove_person(const std::string &name) {
-        persons.delete_el(name);
+    void remove_person() {
+        persons.pop();
     }
 
 
@@ -80927,7 +80917,6 @@ bool is_Valid_Int_32(const std::string &str) {
             value > std::numeric_limits<int32_t>::max()) {
             return false;
         }
-
         return true;
     } catch (const std::invalid_argument &) {
 
@@ -80947,7 +80936,7 @@ void print_person(const Person &person) {
 void print_department(const Department &department) {
     std::cout << department.get_name() << "\n";
     std::cout << " Список менеджеров отдела:\n";
-    std::cout << "\tФИО: Зарплата (у.е.)\n";
+    std::cout << "\tФамилия: Зарплата (у.е.)\n";
     department.get_stack_persons().for_each([](const Person &person) {
         if (!person.get_name().empty()) {
             print_person(person);
@@ -80965,9 +80954,9 @@ void print_all_data(const Shop *shop) {
 }
 
 
-void remove_person(const Shop *shop, const std::string &dep, const std::string &name) {
+void remove_person(const Shop *shop, const std::string &dep) {
     try {
-        shop->find_department(dep).remove_person(name);
+        shop->find_department(dep).remove_person();
     } catch (const std::exception &e) {
         std::cerr << e.what() << "\n";
     }
@@ -81039,10 +81028,16 @@ Shop *create_new_shop() {
 
 void add_department(Shop *shop) {
     if (shop) {
-        const std::string name = get_str("Введите название отдела\n");
-        shop->add_department(name);
+        const std::string dep_name = get_str("Введите название Отдела\n");
+        try {
+            find_department(shop, dep_name);
+        } catch (const std::runtime_error &) {
+            shop->add_department(dep_name);
+            return;
+        }
+        std::cerr << "Ошибка. Отдел уже существует";
     } else {
-        std::cout << "Ошибка. Магазин не создан\n";
+        std::cerr << "Ошибка. Магазин не создан\n";
     }
 }
 
@@ -81106,15 +81101,8 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
             break;
         }
         case my_var_and_const::Operation::Del_pers: {
-            const std::string name = get_str("Введите Фамилию менеджера\n");
-            try {
-                find_person(shop, name);
-            } catch (const std::runtime_error &e) {
-                std::cerr << e.what() << "\n";
-                break;
-            }
-            const std::string dep_name = get_str("Введите название Отдела\n");
-            remove_person(shop, dep_name, name);
+            const std::string dep_name = get_str("Введите название Отдела, откуда удалить Менеджера\n");
+            remove_person(shop, dep_name);
             break;
         }
         case my_var_and_const::Operation::Find_dep: {
@@ -81183,8 +81171,8 @@ int main() {
 
     delete shop;
     return 
-# 304 "/home/rzms/CLionProjects/saod/cw/main.cpp" 3 4
+# 302 "/home/rzms/CLionProjects/saod/cw/main.cpp" 3 4
           0
-# 304 "/home/rzms/CLionProjects/saod/cw/main.cpp"
+# 302 "/home/rzms/CLionProjects/saod/cw/main.cpp"
                       ;
 }

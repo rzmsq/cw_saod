@@ -44,20 +44,12 @@ public:
     }
 
     // Удаление из стека
-    void delete_el(const std::string &name) {
+    void pop() {
         if (is_empty()) {
             throw std::runtime_error("Ошибка удаления\n");
         }
-        const int32_t index = find(name);
-        if (index != my_var_and_const::el_not_found) {
-            if (index != top) {
-                data[index] = data[top];
-            }
-            data[top] = T();
-            --top;
-        } else {
-            throw std::runtime_error("Элемент не найден");
-        }
+        data[top] = T();
+        --top;
     }
 
     // поиск заданного элемента
