@@ -1154,6 +1154,18 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "ENABLE_ASAN",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Enable AddressSanitizer"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "ON"
+		},
+		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_GTest",
 			"properties" : 
 			[

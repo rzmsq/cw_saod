@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-// пространство имён для использования констант, переменных, перечислений
+// пространство имён для констант, переменных, перечислений
 namespace my_var_and_const {
     constexpr size_t max_size_stack{16};
     constexpr int32_t stack_empty{-1};

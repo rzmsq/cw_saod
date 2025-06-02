@@ -87,9 +87,10 @@ public:
     void insert_element(const std::string &name) {
         Node *new_node = new Node(name);
         Node *current = head->next;
+        Node *prev = head;
 
         try {
-            // вставка в начало
+            // Вставка в начало
             if (!current || new_node->data.get_name() < current->data.get_name()) {
                 new_node->next = current;
                 new_node->prev = head;
@@ -100,25 +101,18 @@ public:
                 return;
             }
 
-
-            // поиск позиции для вставки
-            while (current->next && current->data.get_name() < new_node->data.get_name()) {
+            // Поиск позиции для вставки
+            while (current && current->data.get_name() < new_node->data.get_name()) {
+                prev = current;
                 current = current->next;
             }
 
-            if (current->data.get_name() < new_node->data.get_name()) {
-                // вставка между current и current->next
-                new_node->next = current->next;
-                new_node->prev = current;
-                if (current->next) {
-                    current->next->prev = new_node;
-                }
-                current->next = new_node;
-            } else {
-                // вставка перед current
-                new_node->next = current;
-                new_node->prev = current->prev;
-                current->prev->next = new_node;
+            // Вставка перед current (или в конец, если current == nullptr)
+            new_node->next = current;
+            new_node->prev = prev;
+            prev->next = new_node;
+            if (current) {
+                current->prev = new_node;
             }
         } catch (...) {
             std::cerr << "Ошибка добавления отдела\n";
@@ -128,7 +122,7 @@ public:
 
     // удаление заданного узла
     void delete_element(const std::string &name) {
-        if (const Node *node_for_del = search(name)) {
+        if (Node *node_for_del = search(name)) {
             node_for_del->prev->next = node_for_del->next;
             if (node_for_del->next) {
                 node_for_del->next->prev = node_for_del->prev;

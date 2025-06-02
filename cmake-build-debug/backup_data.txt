@@ -39,3 +39,5 @@ electronics
   Alexeev 490
   Lebedev 570
   Semenov 550
+toys
+  Ivanov 220

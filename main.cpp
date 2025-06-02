@@ -133,7 +133,7 @@ Person &find_person(const Shop *shop, const std::string &person_to_find) {
         try {
             result = &department.find_person(person_to_find);
             result_dep = &department;
-            std::cout << "Сотрудник найдет в отделе: " << result_dep->get_name() << "\n"
+            std::cout << "Сотрудник найден в отделе: " << result_dep->get_name() << "\n"
                     << "\tФИО: Зарплата (у.е.)\n";
             print_person(*result);
         } catch (const std::runtime_error &) {
@@ -222,7 +222,7 @@ void process_operation(Shop *&shop, const my_var_and_const::Operation &op) {
         case my_var_and_const::Operation::Add_pers: {
             const std::string name = get_str("Введите Фамилию менеджера\n");
             if (name.contains(' ')) {
-                std::cout << "Ошибка.Введите фамилию без пробелов\n";
+                std::cout << "Ошибка. Введите фамилию без пробелов\n";
                 return;
             }
             const std::string salary_str = get_str("Введите Зарплату менеджера\n");
